@@ -72,7 +72,7 @@ if ('serviceWorker' in navigator) {
   const PIPE_SPEED_PPS = 55;  // px per s (slow)
   const PIPE_GAP = 240;       // px
   const PIPE_WIDTH = 70;      // px
-  const SPAWN_EVERY = 4200;   // ms
+  const SPAWN_EVERY = 3200;   // ms
 
   const state = { started:false, over:false, score:0, t:0, lastSpawn:0, pipes:[], _suspended:false, debug:false };
 
@@ -125,7 +125,7 @@ if ('serviceWorker' in navigator) {
     // vertical motion
     player.vy += GRAVITY_PPS2 * dt;
     player.y += player.vy * dt;
-    player.rotation = Math.max(-0.2, Math.min(0.5, player.vy/800));
+    player.rotation = Math.max(-0.22, Math.min(0.40, player.vy/600));
 
     // pipe motion (pure design units; independent of scale)
     for (var i=0;i<state.pipes.length;i++){ state.pipes[i].x -= PIPE_SPEED_PPS * dt; }
