@@ -78,7 +78,7 @@ if ('serviceWorker' in navigator) {
 
   // Physics (smaller, quicker, more natural)
   DRAG_S:        9.5,  // 1/s linear damping (quicker settle)
-  GRAVITY_PPS2:  2600, // px/s^2 stronger pull down
+  GRAVITY_PPS2:  2200, // px/s^2 stronger pull down
   JUMP_V0:       310,  // px/s smaller tap
   VY_MAX:        700   // px/s clamp to avoid huge spikes
 };
@@ -152,10 +152,15 @@ if ('serviceWorker' in navigator) {
     // vertical motion
     
     // Linear damping ODE: vy' = g - k*vy ; y' = vy
-    const dtSec = dt / 1000;
+    const dtSec = dt;
     player.vy += (GRAVITY_PPS2 - DRAG_S * player.vy) * dtSec;
     if (player.vy >  VY_MAX) player.vy =  VY_MAX;
     if (player.vy < -VY_MAX) player.vy = -VY_MAX;
+    player.y += player.vy * dtSec;
+    // bounds: top/bottom
+    const Hpx = canvas.height/scale;
+    if (player.y - player.r <= 0) { player.y = player.r; return gameOver(); }
+    if (player.y + player.r >= Hpx) { player.y = Hpx - player.r; return gameOver(); }
     // pipe motion (pure design units; independent of scale)
     for (var i=0;i<state.pipes.length;i++){ state.pipes[i].x -= PIPE_VX * dt; }
     while (state.pipes.length && (state.pipes[0].x + PIPE_WIDTH) < -20) state.pipes.shift();
