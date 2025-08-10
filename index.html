@@ -70,20 +70,19 @@ if ('serviceWorker' in navigator) {
 
   // ======== EASY TUNING SETTINGS (edit these) ========
   const SETTINGS = {
-    // Pipes
-    PIPE_GAP:     240,
-    PIPE_WIDTH:   70,
-    PIPE_VX:      220,   // faster
-    SPAWN_EVERY:  3800,  // more distance
+  // Pipes
+  PIPE_GAP:     240,   // px opening
+  PIPE_WIDTH:   70,    // px
+  PIPE_VX:      220,   // px/sec  (quite a bit faster)
+  SPAWN_EVERY:  3800,  // ms      (more distance between pipes)
 
-    // Physics: small, quick, natural tap
-    DRAG_S:        9.5,
-    GRAVITY_PPS2:  2600,
-    JUMP_V0:       310,
-    VY_MAX:        700
+  // Physics (smaller, quicker, more natural)
+  DRAG_S:        9.5,  // 1/s linear damping (quicker settle)
+  GRAVITY_PPS2:  2600, // px/s^2 stronger pull down
+  JUMP_V0:       310,  // px/s smaller tap
+  VY_MAX:        700   // px/s clamp to avoid huge spikes
 };
 
-  };
   const { PIPE_GAP, PIPE_WIDTH, PIPE_VX, SPAWN_EVERY, DRAG_S, GRAVITY_PPS2, JUMP_V0, VY_MAX } = SETTINGS;
   // =====================================================
 
@@ -144,10 +143,6 @@ if ('serviceWorker' in navigator) {
     player.vy += (GRAVITY_PPS2 - DRAG_S * player.vy) * dtSec;
     if (player.vy >  VY_MAX) player.vy =  VY_MAX;
     if (player.vy < -VY_MAX) player.vy = -VY_MAX;
-    
-    player.y += player.vy * dt;
-    player.rotation = Math.max(-0.22, Math.min(0.40, player.vy/600));
-
     // pipe motion (pure design units; independent of scale)
     for (var i=0;i<state.pipes.length;i++){ state.pipes[i].x -= PIPE_VX * dt; }
     while (state.pipes.length && (state.pipes[0].x + PIPE_WIDTH) < -20) state.pipes.shift();
