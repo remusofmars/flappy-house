@@ -100,7 +100,20 @@ if ('serviceWorker' in navigator) {
     reset(){ this.x=120; this.y=360; this.vy=0; this.rotation=0; }
   };
 
-  function flap(){ if (!state.started) start(); if (state.over) return; player.vy = -JUMP_V0; }
+  function flap(){
+  // Self-start: if game hasn't started, mark started and hide overlays.
+  if (!state.started) {
+    state.started = true;
+    state.over = false;
+    const so = document.getElementById('startOverlay'); if (so) so.classList.add('hide');
+    const go = document.getElementById('gameOverOverlay'); if (go) go.classList.add('hide');
+  }
+  // Ignore if game is over
+  if (state.over) return;
+  // Apply upward impulse (new model uses absolute set)
+  player.vy = -JUMP_V0;
+}
+
   window.addEventListener('keydown', function(e){
     if (e.code==='Space' || e.code==='ArrowUp') { e.preventDefault(); flap(); }
     if (e.key==='d' || e.key==='D') state.debug = !state.debug;
@@ -210,6 +223,39 @@ if ('serviceWorker' in navigator) {
 
   document.addEventListener('visibilitychange', function(){ if (document.hidden) { state._suspended = true; } else { last = performance.now(); state._suspended = false; } });
 })();
-</script>
+
+// ===== Robust input bindings (tap/click/keys) =====
+(function bindInput(){
+  const onPress = (e)=>{ if (e && e.preventDefault) e.preventDefault(); flap(); };
+  const opts = {passive:false};
+
+  const addAll = (el)=>{
+    if (!el) return;
+    el.addEventListener('pointerdown', onPress, opts);
+    el.addEventListener('touchstart', onPress, opts);
+    el.addEventListener('mousedown', onPress, opts);
+    el.addEventListener('click', onPress, opts);
+  };
+
+  addAll(document.getElementById('game'));   // canvas
+  addAll(document.body);                     // fallback
+
+  // Keyboard (desktop)
+  window.addEventListener('keydown', (e)=>{
+    if (e.code === 'Space' || e.code === 'ArrowUp') { if (e.preventDefault) e.preventDefault(); flap(); }
+  });
+
+  // Start / Restart buttons
+  const startBtn = document.getElementById('startBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  if (startBtn) startBtn.addEventListener('click', onPress, opts);
+  if (restartBtn) {
+    restartBtn.addEventListener('click', (e)=>{
+      if (e && e.preventDefault) e.preventDefault();
+      try { if (typeof reset === 'function') reset(); } catch(e){}
+      flap();
+    }, opts);
+  }
+})();</script>
 </body>
 </html>
