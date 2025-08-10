@@ -71,16 +71,18 @@ if ('serviceWorker' in navigator) {
   // ======== EASY TUNING SETTINGS (edit these) ========
   const SETTINGS = {
     // Pipes
-    PIPE_GAP:     240,   // px opening
-    PIPE_WIDTH:   70,    // px
-    PIPE_VX:      200,   // px/sec  (faster)
-    SPAWN_EVERY:  3600,  // ms      (more distance between pipes)
+    PIPE_GAP:     240,
+    PIPE_WIDTH:   70,
+    PIPE_VX:      220,   // faster
+    SPAWN_EVERY:  3800,  // more distance
 
-    // Physics (natural, small, quick arc)
-    DRAG_S:        7.5,   // 1/s linear damping (higher = settles faster)
-    GRAVITY_PPS2:  2200,  // px/s^2 downward accel
-    JUMP_V0:       460,   // px/s on tap (lower = smaller jump)
-    VY_MAX:        900    // px/s clamp
+    // Physics: small, quick, natural tap
+    DRAG_S:        9.5,
+    GRAVITY_PPS2:  2600,
+    JUMP_V0:       310,
+    VY_MAX:        700
+};
+
   };
   const { PIPE_GAP, PIPE_WIDTH, PIPE_VX, SPAWN_EVERY, DRAG_S, GRAVITY_PPS2, JUMP_V0, VY_MAX } = SETTINGS;
   // =====================================================
