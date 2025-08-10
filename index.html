@@ -66,13 +66,26 @@ if ('serviceWorker' in navigator) {
   }
   let scale = 1; resize(); window.addEventListener('resize', resize);
 
-  // Physics in design-space units (px and px/s)
-  const GRAVITY_PPS2 = 240;   // px per s^2 (gentle)
-  const FLAP_VY = -380;       // px per s
-  const PIPE_SPEED_PPS = 55;  // px per s (slow)
-  const PIPE_GAP = 240;       // px
-  const PIPE_WIDTH = 70;      // px
-  const SPAWN_EVERY = 3200;   // ms
+  
+
+  // ======== EASY TUNING SETTINGS (edit these) ========
+  const SETTINGS = {
+    // Pipes
+    PIPE_GAP:     240,   // px opening
+    PIPE_WIDTH:   70,    // px
+    PIPE_VX:      200,   // px/sec  (faster)
+    SPAWN_EVERY:  3600,  // ms      (more distance between pipes)
+
+    // Physics (natural, small, quick arc)
+    DRAG_S:        7.5,   // 1/s linear damping (higher = settles faster)
+    GRAVITY_PPS2:  2200,  // px/s^2 downward accel
+    JUMP_V0:       460,   // px/s on tap (lower = smaller jump)
+    VY_MAX:        900    // px/s clamp
+  };
+  const { PIPE_GAP, PIPE_WIDTH, PIPE_VX, SPAWN_EVERY, DRAG_S, GRAVITY_PPS2, JUMP_V0, VY_MAX } = SETTINGS;
+  // =====================================================
+
+// ms
 
   const state = { started:false, over:false, score:0, t:0, lastSpawn:0, pipes:[], _suspended:false, debug:false };
 
@@ -86,7 +99,7 @@ if ('serviceWorker' in navigator) {
     reset(){ this.x=120; this.y=360; this.vy=0; this.rotation=0; }
   };
 
-  function flap(){ if (!state.started) start(); if (state.over) return; player.vy = FLAP_VY; }
+  function flap(){ if (!state.started) start(); if (state.over) return; player.vy = -JUMP_V0; }
   window.addEventListener('keydown', function(e){
     if (e.code==='Space' || e.code==='ArrowUp') { e.preventDefault(); flap(); }
     if (e.key==='d' || e.key==='D') state.debug = !state.debug;
@@ -123,12 +136,18 @@ if ('serviceWorker' in navigator) {
 
     const dt = dtMs / 1000; // seconds
     // vertical motion
-    player.vy += GRAVITY_PPS2 * dt;
+    
+    // Linear damping ODE: vy' = g - k*vy ; y' = vy
+    const dtSec = dt / 1000;
+    player.vy += (GRAVITY_PPS2 - DRAG_S * player.vy) * dtSec;
+    if (player.vy >  VY_MAX) player.vy =  VY_MAX;
+    if (player.vy < -VY_MAX) player.vy = -VY_MAX;
+    
     player.y += player.vy * dt;
     player.rotation = Math.max(-0.22, Math.min(0.40, player.vy/600));
 
     // pipe motion (pure design units; independent of scale)
-    for (var i=0;i<state.pipes.length;i++){ state.pipes[i].x -= PIPE_SPEED_PPS * dt; }
+    for (var i=0;i<state.pipes.length;i++){ state.pipes[i].x -= PIPE_VX * dt; }
     while (state.pipes.length && (state.pipes[0].x + PIPE_WIDTH) < -20) state.pipes.shift();
 
     // scoring + collisions
