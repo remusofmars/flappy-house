@@ -67,9 +67,9 @@ if ('serviceWorker' in navigator) {
   let scale = 1; resize(); window.addEventListener('resize', resize);
 
   // Physics in design-space units (px and px/s)
-  const GRAVITY_PPS2   = 270;
-  const FLAP_VY        = -420;
-  const PIPE_SPEED_PPS = 85;     // faster than now
+  const GRAVITY_PPS2   = 285;   // a touch faster fall
+  const FLAP_VY        = -340;  // smaller jump (less negative)
+  const PIPE_SPEED_PPS = 90;    // slightly quicker pipes
   const PIPE_GAP       = 240;    // keep the gap
   const PIPE_WIDTH     = 70;
   const SPAWN_EVERY    = 3600;   // ~85 * 3.6 = ~306 px apart
