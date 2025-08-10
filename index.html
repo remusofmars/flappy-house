@@ -67,12 +67,13 @@ if ('serviceWorker' in navigator) {
   let scale = 1; resize(); window.addEventListener('resize', resize);
 
   // Physics in design-space units (px and px/s)
-  const GRAVITY_PPS2 = 240;   // px per s^2 (gentle)
-  const FLAP_VY = -380;       // px per s
-  const PIPE_SPEED_PPS = 55;  // px per s (slow)
-  const PIPE_GAP = 240;       // px
-  const PIPE_WIDTH = 70;      // px
-  const SPAWN_EVERY = 3600;   // ms
+  const GRAVITY_PPS2   = 270;
+  const FLAP_VY        = -420;
+  const PIPE_SPEED_PPS = 85;     // faster than now
+  const PIPE_GAP       = 240;    // keep the gap
+  const PIPE_WIDTH     = 70;
+  const SPAWN_EVERY    = 3600;   // ~85 * 3.6 = ~306 px apart
+
 
   const state = { started:false, over:false, score:0, t:0, lastSpawn:0, pipes:[], _suspended:false, debug:false };
 
