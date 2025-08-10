@@ -1,5 +1,5 @@
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open('flappy-house-v8-3-5-4-3-2-1').then(c => c.addAll([
+  e.waitUntil(caches.open('flappy-house-v8-3-9-8-7-6-5-4-3-2-1').then(c => c.addAll([
     './',
     './index.html',
     './manifest.webmanifest',
